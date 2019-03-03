@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Restaurant } from '../models/Restaurant';
 
-export const allRestaurants = async (req: Request, res: Response) => {
+export const getRestaurants = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit, 10);
     const pageNumber = parseInt(req.query.pageNumber, 10);
