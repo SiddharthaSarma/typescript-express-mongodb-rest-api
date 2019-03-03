@@ -4,14 +4,19 @@ import { Restaurant } from '../models/Restaurant';
 export const getRestaurants = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit, 10);
-    const pageNumber = parseInt(req.query.pageNumber, 10);
+    const pageNumber = (parseInt(req.query.page, 10) - 1) | 0;
     const records = await Restaurant.find({ cuisine_style: 'Swiss' })
       .sort({ rating: -1 })
-      .skip(pageNumber || 0)
+      .skip(pageNumber * limit)
       .limit(limit || 20);
     const recordsLength = await Restaurant.countDocuments();
     if (records && records.length) {
-      res.json({ data: records, totalLength: recordsLength });
+      res.json({
+        data: records,
+        totalLength: recordsLength,
+        pageNumber: pageNumber + 1,
+        limit: limit || 20
+      });
     }
   } catch (error) {
     console.log(error);
