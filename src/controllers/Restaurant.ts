@@ -25,21 +25,15 @@ export const getRestaurants = async (req: Request, res: Response) => {
 
 export const bulkWrite = async (req: Request, res: Response) => {
   var ops: any = [];
-  var count = 1;
   var records = await Restaurant.find({
     $where: 'return !this.is_updated'
   }).limit(12000);
-  // var records: any = await Restaurant.findById('5c7a81a1ae493d2de40b51cd');
-  // records = [records];
-  records.forEach(async function(doc: any, i: number) {
-    console.log(i);
+  records.forEach(async function(doc: any) {
     if (doc.cuisine_style && typeof doc.cuisine_style[0] === 'string') {
       doc.cuisine_style = doc.cuisine_style[0]
         .replace(/[\[\]']+/g, '')
         .split(',');
     }
-    console.log(doc._id);
-    console.log(doc.cuisine_style);
     ops.push({
       updateOne: {
         filter: { _id: doc._id },
@@ -51,14 +45,6 @@ export const bulkWrite = async (req: Request, res: Response) => {
         }
       }
     });
-
-    // if (ops.length) {
-    //   const records = await Restaurant.bulkWrite(ops);
-    //   console.log(count);
-    //   count++;
-    //   ops = [];
-    //   res.send(records);
-    // }
   });
 
   if (ops.length > 0) {
